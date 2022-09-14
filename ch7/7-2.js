@@ -11,11 +11,15 @@ export class Person {
   }
 
   get courses() {
-    return this.#courses;
+    return [...this.#courses];
   }
 
-  set courses(courses) {
-    this.#courses = courses;
+  addCourse(course) {
+    this.#courses.push(course);
+  }
+
+  removeCourse(course) {
+    this.#courses = this.#courses.filter((c) => c !== course);
   }
 }
 
@@ -37,5 +41,8 @@ export class Course {
 }
 
 const ellie = new Person('엘리');
-ellie.courses.push(new Course('리팩토링', true));
+const course = new Course('자바스크립트', true);
+ellie.addCourse(course);
+console.log(ellie.courses.length);
+ellie.removeCourse(course);
 console.log(ellie.courses.length);

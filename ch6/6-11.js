@@ -1,16 +1,42 @@
-export function priceOrder(product, quantity, shippingMethod) {
-  const basePrice = product.basePrice * quantity;
-  const discount =
-    Math.max(quantity - product.discountThreshold, 0) *
-    product.basePrice *
-    product.discountRate;
-  const shippingPerCase =
-    basePrice > shippingMethod.discountThreshold
-      ? shippingMethod.discountedFee
-      : shippingMethod.feePerCase;
-  const shippingCost = quantity * shippingPerCase;
+export function priceOrder(order) {
+  const basePrice = order.basePrice;
+  const discount = order.discount;
+  const shippingCost = order.shippingCose;
   const price = basePrice - discount + shippingCost;
   return price;
+}
+
+class Order {
+  #product;
+  #quantity;
+  #shippingMethod;
+  constructor(product, quantity, shippingMethod) {
+    this.#product = product;
+    this.#quantity = quantity;
+    this.#shippingMethod = shippingMethod;
+  }
+
+  get basePrice() {
+    return this.#product.basePrice * this.#quantity;
+  }
+
+  get discount() {
+    return (
+      Math.max(this.#quantity - this.#product.discountThreshold, 0) *
+      this.#product.basePrice *
+      this.#product.discountRate
+    );
+  }
+
+  get shippingPerCase() {
+    return this.basePrice > this.#shippingMethod.discountThreshold
+      ? this.#shippingMethod.discountedFee
+      : this.#shippingMethod.feePerCase;
+  }
+
+  get shippingCose() {
+    return this.shippingPerCase * this.#quantity;
+  }
 }
 
 // 사용 예:
@@ -26,5 +52,5 @@ const shippingMethod = {
   discountedFee: 3,
 };
 
-const price = priceOrder(product, 5, shippingMethod);
+const price = priceOrder(new Order(product, 10, shippingMethod));
 console.log(price);
